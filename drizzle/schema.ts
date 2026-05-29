@@ -1,4 +1,5 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { decimal, int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, date } from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +26,111 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+// ============ PRODUCTOS ============
+export const products = mysqlTable("products", {
+  id: int("id").autoincrement().primaryKey(),
+  barcode: varchar("barcode", { length: 255 }).unique(),
+  name: text("name").notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  unit: varchar("unit", { length: 50 }).default("UN"),
+  hasSerial: boolean("hasSerial").default(false),
+  stock: int("stock").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Product = typeof products.$inferSelect;
+export type InsertProduct = typeof products.$inferInsert;
+
+// ============ CONFIGURACIÓN EMPRESARIAL ============
+export const companyConfig = mysqlTable("company_config", {
+  id: int("id").autoincrement().primaryKey(),
+  rif: varchar("rif", { length: 50 }),
+  businessName: text("businessName"),
+  address: text("address"),
+  phone1: varchar("phone1", { length: 20 }),
+  phone2: varchar("phone2", { length: 20 }),
+  email: varchar("email", { length: 255 }),
+  website: varchar("website", { length: 255 }),
+  ivaRate: decimal("ivaRate", { precision: 5, scale: 2 }).default("16.00"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CompanyConfig = typeof companyConfig.$inferSelect;
+export type InsertCompanyConfig = typeof companyConfig.$inferInsert;
+
+// ============ NOTAS DE ENTREGA ============
+export const deliveryNotes = mysqlTable("delivery_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  noteNumber: varchar("noteNumber", { length: 50 }).notNull().unique(),
+  noteDate: date("noteDate").notNull(),
+  clientName: text("clientName").notNull(),
+  clientRif: varchar("clientRif", { length: 50 }),
+  clientAddress: text("clientAddress"),
+  clientPhone: varchar("clientPhone", { length: 20 }),
+  clientContact: varchar("clientContact", { length: 100 }),
+  subtotal: decimal("subtotal", { precision: 12, scale: 2 }).default("0"),
+  ivaAmount: decimal("ivaAmount", { precision: 12, scale: 2 }).default("0"),
+  total: decimal("total", { precision: 12, scale: 2 }).default("0"),
+  observations: text("observations"),
+  deliveredBy: varchar("deliveredBy", { length: 100 }),
+  receivedBy: varchar("receivedBy", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DeliveryNote = typeof deliveryNotes.$inferSelect;
+export type InsertDeliveryNote = typeof deliveryNotes.$inferInsert;
+
+// ============ LÍNEAS DE NOTA ============
+export const noteLines = mysqlTable("note_lines", {
+  id: int("id").autoincrement().primaryKey(),
+  noteId: int("noteId").notNull(),
+  productId: int("productId").notNull(),
+  quantity: int("quantity").notNull(),
+  unitPrice: decimal("unitPrice", { precision: 10, scale: 2 }).notNull(),
+  lineTotal: decimal("lineTotal", { precision: 12, scale: 2 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NoteLine = typeof noteLines.$inferSelect;
+export type InsertNoteLine = typeof noteLines.$inferInsert;
+
+// ============ SERIALES ============
+export const serials = mysqlTable("serials", {
+  id: int("id").autoincrement().primaryKey(),
+  lineId: int("lineId").notNull(),
+  serial: varchar("serial", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Serial = typeof serials.$inferSelect;
+export type InsertSerial = typeof serials.$inferInsert;
+
+// ============ RELACIONES ============
+export const deliveryNotesRelations = relations(deliveryNotes, ({ many }) => ({
+  lines: many(noteLines),
+}));
+
+export const noteLinesRelations = relations(noteLines, ({ one, many }) => ({
+  note: one(deliveryNotes, {
+    fields: [noteLines.noteId],
+    references: [deliveryNotes.id],
+  }),
+  product: one(products, {
+    fields: [noteLines.productId],
+    references: [products.id],
+  }),
+  serials: many(serials),
+}));
+
+export const serialsRelations = relations(serials, ({ one }) => ({
+  line: one(noteLines, {
+    fields: [serials.lineId],
+    references: [noteLines.id],
+  }),
+}));
