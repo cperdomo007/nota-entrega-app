@@ -9,6 +9,7 @@ import CreateNote from "./pages/CreateNote";
 import NoteDetail from "./pages/NoteDetail";
 import NotesList from "./pages/NotesList";
 import Settings from "./pages/Settings";
+import Products from "./pages/Products";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/notes/:id"} component={NoteDetail} />
       <Route path={"/notes"} component={NotesList} />
       <Route path={"/settings"} component={Settings} />
+      <Route path={"/products"} component={Products} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
