@@ -1,6 +1,5 @@
 import { useRoute, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { Printer, Download, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
@@ -58,7 +57,6 @@ export default function NoteDetail() {
   };
 
   const handleDownloadPDF = () => {
-    // In a real implementation, this would use a PDF library
     alert("Descarga de PDF - Próximamente");
   };
 
@@ -68,7 +66,7 @@ export default function NoteDetail() {
 
   return (
     <div style={{ minHeight: "100vh", padding: "2rem", background: "linear-gradient(to bottom right, #f8fafc, #f1f5f9)" }}>
-      <div style={{ maxWidth: "80rem", marginLeft: "auto", marginRight: "auto" }}>
+      <div style={{ maxWidth: "900px", marginLeft: "auto", marginRight: "auto" }}>
         {/* Header */}
         <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
@@ -105,159 +103,156 @@ export default function NoteDetail() {
         </div>
 
         {/* Print Content */}
-        <div ref={printRef} style={{ background: "white", padding: "2rem", borderRadius: "0.5rem", border: "1px solid #e2e8f0" }}>
+        <div ref={printRef} style={{ background: "white", padding: "2.5rem", fontFamily: "Arial, sans-serif", fontSize: "11px", lineHeight: "1.4" }}>
           {/* Company Header */}
           {config && (
-            <div style={{ marginBottom: "2rem", paddingBottom: "1.5rem", borderBottom: "2px solid #e2e8f0" }}>
-              <h1 style={{ fontSize: "1.875rem", fontWeight: "bold", color: "#1e293b", marginBottom: "0.5rem" }}>
-                NOTA DE ENTREGA
-              </h1>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "1rem" }}>
+            <div style={{ marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: "1px solid #333" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "2rem", alignItems: "start" }}>
                 <div>
-                  <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>RIF:</div>
-                  <div style={{ fontWeight: "600", color: "#1e293b" }}>{config.rif}</div>
+                  {/* Logo placeholder */}
+                  <div style={{ fontSize: "18px", fontWeight: "bold", color: "#003366", marginBottom: "0.5rem" }}>LOGO</div>
                 </div>
-                <div>
-                  <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>Teléfono:</div>
-                  <div style={{ fontWeight: "600", color: "#1e293b" }}>{config.phone1}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>Dirección:</div>
-                  <div style={{ fontWeight: "600", color: "#1e293b" }}>{config.address}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "0.25rem" }}>Email:</div>
-                  <div style={{ fontWeight: "600", color: "#1e293b" }}>{config.email}</div>
+                <div style={{ fontSize: "10px", lineHeight: "1.6" }}>
+                  <div><strong>R.I.F:</strong> {config.rif}</div>
+                  <div><strong>Dirección Fiscal:</strong> {config.address}</div>
+                  <div><strong>Teléfonos:</strong> {config.phone1}{config.phone2 ? ` / ${config.phone2}` : ""}</div>
+                  <div><strong>E-mail:</strong> {config.email}</div>
+                  <div><strong>Website:</strong> {config.website}</div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Note Info */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "2rem" }}>
-            <div>
-              <h2 style={{ fontSize: "0.875rem", fontWeight: "600", color: "#475569", marginBottom: "0.75rem", textTransform: "uppercase" }}>
-                Datos de la Nota
-              </h2>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <span style={{ color: "#64748b" }}>Número:</span>
-                <span style={{ fontWeight: "600", color: "#1e293b" }}>{note.noteNumber}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ color: "#64748b" }}>Fecha:</span>
-                <span style={{ fontWeight: "600", color: "#1e293b" }}>
-                  {format(new Date(note.noteDate as any), "dd/MM/yyyy")}
-                </span>
-              </div>
+          {/* Title and Note Number */}
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "2rem", marginBottom: "1.5rem", alignItems: "center" }}>
+            <div style={{ textAlign: "center" }}>
+              <h1 style={{ fontSize: "16px", fontWeight: "bold", color: "#000", margin: "0" }}>NOTA DE ENTREGA</h1>
             </div>
+            <div style={{ textAlign: "center", border: "2px solid #333", padding: "0.5rem" }}>
+              <div style={{ fontSize: "12px", fontWeight: "bold" }}>Nº {note.noteNumber}</div>
+            </div>
+          </div>
 
-            <div>
-              <h2 style={{ fontSize: "0.875rem", fontWeight: "600", color: "#475569", marginBottom: "0.75rem", textTransform: "uppercase" }}>
-                Datos del Cliente
-              </h2>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <span style={{ color: "#64748b" }}>Nombre:</span>
-                <span style={{ fontWeight: "600", color: "#1e293b" }}>{note.clientName}</span>
+          {/* Client Data Section */}
+          <div style={{ marginBottom: "1.5rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+              {/* Left Column */}
+              <div>
+                <div style={{ fontWeight: "bold", marginBottom: "0.5rem", fontSize: "11px" }}>Datos del Cliente</div>
+                <div style={{ marginBottom: "0.3rem", fontSize: "10px" }}>
+                  <strong>Nombre o Razón Social:</strong> {note.clientName}
+                </div>
+                <div style={{ marginBottom: "0.3rem", fontSize: "10px" }}>
+                  <strong>R.I.F:</strong> {note.clientRif || ""}
+                </div>
+                <div style={{ fontSize: "10px" }}>
+                  <strong>Dirección:</strong> {note.clientAddress || ""}
+                </div>
               </div>
-              {note.clientRif && (
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                  <span style={{ color: "#64748b" }}>RIF:</span>
-                  <span style={{ fontWeight: "600", color: "#1e293b" }}>{note.clientRif}</span>
+
+              {/* Right Column */}
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ border: "1px solid #333", padding: "0.5rem", textAlign: "center" }}>
+                    <div style={{ fontSize: "9px", color: "#666" }}>Cliente</div>
+                    <div style={{ fontSize: "14px", fontWeight: "bold" }}>{note.noteNumber}</div>
+                  </div>
+                  <div style={{ border: "1px solid #333", padding: "0.5rem", textAlign: "center" }}>
+                    <div style={{ fontSize: "9px", color: "#666" }}>Fecha</div>
+                    <div style={{ fontSize: "12px", fontWeight: "bold" }}>
+                      {format(new Date(note.noteDate as any), "dd-MM-yyyy")}
+                    </div>
+                  </div>
                 </div>
-              )}
-              {note.clientAddress && (
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                  <span style={{ color: "#64748b" }}>Dirección:</span>
-                  <span style={{ fontWeight: "600", color: "#1e293b" }}>{note.clientAddress}</span>
+                <div style={{ fontSize: "10px", marginBottom: "0.3rem" }}>
+                  <strong>Atención:</strong> {note.clientContact || ""}
                 </div>
-              )}
-              {note.clientPhone && (
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                  <span style={{ color: "#64748b" }}>Teléfono:</span>
-                  <span style={{ fontWeight: "600", color: "#1e293b" }}>{note.clientPhone}</span>
+                <div style={{ fontSize: "10px" }}>
+                  <strong>Teléfonos de Contacto:</strong> {note.clientPhone || ""}
                 </div>
-              )}
-              {note.clientContact && (
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>Contacto:</span>
-                  <span style={{ fontWeight: "600", color: "#1e293b" }}>{note.clientContact}</span>
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
           {/* Products Table */}
-          <div style={{ marginBottom: "2rem" }}>
-            <h2 style={{ fontSize: "0.875rem", fontWeight: "600", color: "#475569", marginBottom: "1rem", textTransform: "uppercase" }}>
-              Productos
-            </h2>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <div style={{ marginBottom: "1.5rem" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #333", marginBottom: "0.5rem" }}>
               <thead>
-                <tr style={{ borderBottom: "2px solid #e2e8f0" }}>
-                  <th style={{ textAlign: "left", padding: "0.75rem", fontWeight: "600", color: "#475569", fontSize: "0.875rem" }}>Código</th>
-                  <th style={{ textAlign: "left", padding: "0.75rem", fontWeight: "600", color: "#475569", fontSize: "0.875rem" }}>Descripción</th>
-                  <th style={{ textAlign: "center", padding: "0.75rem", fontWeight: "600", color: "#475569", fontSize: "0.875rem" }}>Cantidad</th>
-                  <th style={{ textAlign: "right", padding: "0.75rem", fontWeight: "600", color: "#475569", fontSize: "0.875rem" }}>P. Unitario</th>
-                  <th style={{ textAlign: "right", padding: "0.75rem", fontWeight: "600", color: "#475569", fontSize: "0.875rem" }}>Subtotal</th>
+                <tr style={{ backgroundColor: "#003366", color: "white" }}>
+                  <th style={{ border: "1px solid #333", padding: "0.4rem", textAlign: "center", fontSize: "10px", fontWeight: "bold", width: "5%" }}>#</th>
+                  <th style={{ border: "1px solid #333", padding: "0.4rem", textAlign: "left", fontSize: "10px", fontWeight: "bold", width: "15%" }}>Código</th>
+                  <th style={{ border: "1px solid #333", padding: "0.4rem", textAlign: "left", fontSize: "10px", fontWeight: "bold", width: "40%" }}>Descripción</th>
+                  <th style={{ border: "1px solid #333", padding: "0.4rem", textAlign: "center", fontSize: "10px", fontWeight: "bold", width: "10%" }}>Cant.</th>
+                  <th style={{ border: "1px solid #333", padding: "0.4rem", textAlign: "right", fontSize: "10px", fontWeight: "bold", width: "15%" }}>Precio Unit.</th>
+                  <th style={{ border: "1px solid #333", padding: "0.4rem", textAlign: "right", fontSize: "10px", fontWeight: "bold", width: "15%" }}>Total.</th>
                 </tr>
               </thead>
               <tbody>
-                {lines?.map((line: any) => (
-                  <tr key={line.id} style={{ borderBottom: "1px solid #e2e8f0" }}>
-                    <td style={{ padding: "0.75rem", color: "#1e293b" }}>{line.product?.barcode}</td>
-                    <td style={{ padding: "0.75rem", color: "#1e293b" }}>{line.product?.name}</td>
-                    <td style={{ padding: "0.75rem", textAlign: "center", color: "#1e293b" }}>{line.quantity}</td>
-                    <td style={{ padding: "0.75rem", textAlign: "right", color: "#1e293b" }}>${parseFloat(line.unitPrice).toFixed(2)}</td>
-                    <td style={{ padding: "0.75rem", textAlign: "right", fontWeight: "600", color: "#1e293b" }}>${parseFloat(line.lineTotal).toFixed(2)}</td>
+                {lines?.map((line: any, index: number) => (
+                  <tr key={line.id} style={{ backgroundColor: index % 2 === 0 ? "#f9f9f9" : "white" }}>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", textAlign: "center", fontSize: "10px" }}>{index + 1}</td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", fontSize: "10px" }}>{line.product?.barcode}</td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", fontSize: "10px" }}>
+                      {line.product?.name}
+                      {line.serials?.length > 0 && (
+                        <div style={{ fontSize: "9px", color: "#666", marginTop: "0.2rem" }}>
+                          Seriales: {line.serials.map((s: any) => s.serial).join(" ")}
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", textAlign: "center", fontSize: "10px" }}>{line.quantity}</td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", textAlign: "right", fontSize: "10px" }}>${parseFloat(line.unitPrice).toFixed(2)}</td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", textAlign: "right", fontSize: "10px", fontWeight: "bold" }}>${parseFloat(line.lineTotal).toFixed(2)}</td>
+                  </tr>
+                ))}
+                {/* Empty rows for handwriting */}
+                {[...Array(Math.max(0, 8 - (lines?.length || 0)))].map((_, i) => (
+                  <tr key={`empty-${i}`} style={{ backgroundColor: i % 2 === 0 ? "#f9f9f9" : "white" }}>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem", height: "1.5rem" }}></td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem" }}></td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem" }}></td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem" }}></td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem" }}></td>
+                    <td style={{ border: "1px solid #ccc", padding: "0.4rem" }}></td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
 
-            {/* Serials */}
-            {lines?.some((line: any) => line.serials?.length > 0) && (
-              <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "1px solid #e2e8f0" }}>
-                <h3 style={{ fontSize: "0.875rem", fontWeight: "600", color: "#475569", marginBottom: "0.75rem" }}>Seriales:</h3>
-                {lines?.map((line: any) => (
-                  line.serials?.length > 0 && (
-                    <div key={line.id} style={{ marginBottom: "0.5rem", fontSize: "0.875rem", color: "#64748b" }}>
-                      <strong>{line.product?.name}:</strong> {line.serials.map((s: any) => s.serial).join(", ")}
-                    </div>
-                  )
-                ))}
-              </div>
-            )}
+          {/* Observations Section */}
+          <div style={{ marginBottom: "1.5rem", border: "1px solid #333", padding: "0.5rem", minHeight: "2rem" }}>
+            <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "0.3rem" }}>Observaciones:</div>
+            <div style={{ fontSize: "10px", minHeight: "1.2rem" }}></div>
           </div>
 
           {/* Totals */}
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "2rem" }}>
-            <div style={{ width: "300px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem", paddingBottom: "0.75rem", borderBottom: "1px solid #e2e8f0" }}>
-                <span style={{ color: "#64748b" }}>Subtotal:</span>
-                <span style={{ fontWeight: "600", color: "#1e293b" }}>${subtotal.toFixed(2)}</span>
+            <div style={{ width: "250px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", marginBottom: "0.5rem" }}>
+                <span style={{ fontSize: "10px", textAlign: "right" }}>SUB-TOTAL</span>
+                <span style={{ fontSize: "10px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${subtotal.toFixed(2)}</span>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem", paddingBottom: "1rem", borderBottom: "2px solid #e2e8f0" }}>
-                <span style={{ color: "#64748b" }}>IVA (16%):</span>
-                <span style={{ fontWeight: "600", color: "#1e293b" }}>${ivaAmount.toFixed(2)}</span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", marginBottom: "0.5rem" }}>
+                <span style={{ fontSize: "10px", textAlign: "right" }}>IVA</span>
+                <span style={{ fontSize: "10px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${ivaAmount.toFixed(2)}</span>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ fontSize: "1.125rem", fontWeight: "600", color: "#1e293b" }}>Total Neto:</span>
-                <span style={{ fontSize: "1.5rem", fontWeight: "bold", color: "rgb(59, 130, 246)" }}>${total.toFixed(2)}</span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", borderTop: "2px solid #333", paddingTop: "0.5rem" }}>
+                <span style={{ fontSize: "11px", fontWeight: "bold", textAlign: "right" }}>TOTAL NETO</span>
+                <span style={{ fontSize: "12px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${total.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
           {/* Signatures */}
-          <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid #e2e8f0" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem" }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ height: "60px", marginBottom: "0.5rem", borderBottom: "1px solid #1e293b" }}></div>
-                <div style={{ fontSize: "0.875rem", fontWeight: "600", color: "#1e293b" }}>Entregado por</div>
-              </div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ height: "60px", marginBottom: "0.5rem", borderBottom: "1px solid #1e293b" }}></div>
-                <div style={{ fontSize: "0.875rem", fontWeight: "600", color: "#1e293b" }}>Recibido conforme</div>
-              </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid #ccc" }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ minHeight: "3rem", borderBottom: "1px solid #333", marginBottom: "0.3rem" }}></div>
+              <div style={{ fontSize: "10px", fontWeight: "bold" }}>Entregado por</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ minHeight: "3rem", borderBottom: "1px solid #333", marginBottom: "0.3rem" }}></div>
+              <div style={{ fontSize: "10px", fontWeight: "bold" }}>Recibido conforme</div>
             </div>
           </div>
         </div>
@@ -267,16 +262,27 @@ export default function NoteDetail() {
       <style>{`
         @media print {
           body {
+            margin: 0;
+            padding: 0;
             background: white;
+          }
+          div[style*="minHeight: 100vh"] {
+            display: none;
+          }
+          div[style*="maxWidth: 80rem"] {
+            max-width: 100%;
+          }
+          div[style*="maxWidth: 900px"] {
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+          }
+          div[style*="marginBottom: 2rem"] {
+            display: none;
           }
           div[style*="background: linear-gradient"] {
             background: white !important;
-          }
-          button {
-            display: none !important;
-          }
-          div:has(> button) {
-            display: none !important;
+            padding: 0 !important;
           }
         }
       `}</style>

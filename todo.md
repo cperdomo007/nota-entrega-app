@@ -69,7 +69,7 @@
 ## Frontend - Gestión de Productos
 - [x] Tabla de productos con opciones de editar/eliminar
 - [x] Formulario para agregar nuevo producto
-- [ ] Importar productos desde Excel (opcional - futura mejora)
+- [x] Importar productos desde Excel (96 productos cargados exitosamente)
 
 ## Diseño y Estilos
 - [x] Definir paleta de colores elegante y profesional
