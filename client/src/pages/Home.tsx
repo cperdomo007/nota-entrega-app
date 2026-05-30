@@ -1,57 +1,28 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
-import { Plus, FileText, Settings } from "lucide-react";
+import { Plus, FileText, Settings, Package } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const { data: notes, isLoading: notesLoading } = trpc.notes.list.useQuery(
-    { limit: 5, offset: 0 },
-    { enabled: isAuthenticated }
+    { limit: 5, offset: 0 }
   );
 
-  if (!isAuthenticated) {
-    return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(to bottom right, #f8fafc, #f1f5f9)" }}>
-        <div style={{ textAlign: "center", maxWidth: "28rem" }}>
-          <div style={{ marginBottom: "2rem" }}>
-            <div style={{ display: "inline-block", padding: "1rem", background: "rgba(59, 130, 246, 0.1)", borderRadius: "9999px", marginBottom: "1rem" }}>
-              <FileText style={{ width: "3rem", height: "3rem", color: "rgb(59, 130, 246)" }} />
-            </div>
-          </div>
-          <h1 style={{ fontSize: "2.25rem", fontWeight: "bold", color: "#1e293b", marginBottom: "0.75rem" }}>
-            Sistema de Notas de Entrega
-          </h1>
-          <p style={{ color: "#64748b", marginBottom: "2rem" }}>
-            Gestiona y emite tus notas de entrega de forma ágil y profesional
-          </p>
-          <Button
-            onClick={() => (window.location.href = "/api/oauth/login")}
-            style={{ background: "rgb(59, 130, 246)", color: "white", padding: "0.75rem 2rem", fontSize: "1rem", fontWeight: "600", border: "none", borderRadius: "0.375rem", cursor: "pointer" }}
-          >
-            Iniciar Sesión
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ minHeight: "100vh", padding: "1rem", background: "linear-gradient(to bottom right, #f8fafc, #f1f5f9)" }}>
+    <div style={{ minHeight: "100vh", padding: "2rem", background: "linear-gradient(to bottom right, #f8fafc, #f1f5f9)" }}>
       <div style={{ maxWidth: "80rem", marginLeft: "auto", marginRight: "auto" }}>
         {/* Header */}
         <div style={{ marginBottom: "3rem" }}>
           <h1 style={{ fontSize: "2.25rem", fontWeight: "bold", color: "#1e293b", marginBottom: "0.5rem" }}>
-            Bienvenido, {user?.name || "Usuario"}
+            Sistema de Notas de Entrega
           </h1>
           <p style={{ color: "#64748b" }}>
-            Gestiona tus notas de entrega desde aquí
+            Gestiona y emite tus notas de entrega de forma ágil y profesional
           </p>
         </div>
 
@@ -90,6 +61,24 @@ export default function Home() {
                 </p>
               </div>
               <FileText style={{ width: "1.25rem", height: "1.25rem", color: "rgb(59, 130, 246)" }} />
+            </div>
+          </Card>
+
+          <Card style={{ padding: "1.5rem", cursor: "pointer", transition: "all 200ms" }}
+            onClick={() => setLocation("/products")}
+            onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1)"}
+            onMouseLeave={(e) => e.currentTarget.style.boxShadow = "0 1px 2px 0 rgba(0, 0, 0, 0.05)"}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+              <div>
+                <h3 style={{ fontWeight: "600", color: "#1e293b", marginBottom: "0.25rem" }}>
+                  Productos
+                </h3>
+                <p style={{ fontSize: "0.875rem", color: "#64748b" }}>
+                  Gestionar catálogo
+                </p>
+              </div>
+              <Package style={{ width: "1.25rem", height: "1.25rem", color: "rgb(59, 130, 246)" }} />
             </div>
           </Card>
 
