@@ -233,10 +233,12 @@ export default function NoteDetail() {
                 <span style={{ fontSize: "10px", textAlign: "right" }}>SUB-TOTAL</span>
                 <span style={{ fontSize: "10px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${subtotal.toFixed(2)}</span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", marginBottom: "0.5rem" }}>
-                <span style={{ fontSize: "10px", textAlign: "right" }}>IVA</span>
-                <span style={{ fontSize: "10px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${ivaAmount.toFixed(2)}</span>
-              </div>
+              {note.applyIVA && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "10px", textAlign: "right" }}>IVA</span>
+                  <span style={{ fontSize: "10px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${ivaAmount.toFixed(2)}</span>
+                </div>
+              )}
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1rem", borderTop: "2px solid #333", paddingTop: "0.5rem" }}>
                 <span style={{ fontSize: "11px", fontWeight: "bold", textAlign: "right" }}>TOTAL NETO</span>
                 <span style={{ fontSize: "12px", fontWeight: "bold", minWidth: "80px", textAlign: "right" }}>${total.toFixed(2)}</span>

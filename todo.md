@@ -95,3 +95,11 @@
 - [x] Checkpoint final
 - [x] Documentación de uso (GUIA_DE_USO.md)
 - [x] Validación de todas las características
+
+
+## CAMBIOS FINALES IMPLEMENTADOS (v2)
+- [x] Campo applyIVA agregado a la base de datos
+- [x] Checkbox para aplicar/no aplicar IVA en el formulario de creación
+- [x] Número de nota editable manualmente (no auto-generado)
+- [x] Vista de impresión actualizada para mostrar IVA solo si está habilitado
+- [x] Todos los tests pasando (17 tests unitarios)

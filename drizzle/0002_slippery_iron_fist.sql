@@ -1,0 +1,1 @@
+ALTER TABLE `delivery_notes` ADD `applyIVA` boolean DEFAULT true;

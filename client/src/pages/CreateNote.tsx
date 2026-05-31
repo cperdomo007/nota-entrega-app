@@ -33,6 +33,7 @@ export default function CreateNote() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [editingSerials, setEditingSerials] = useState<number | null>(null);
   const [serialInput, setSerialInput] = useState("");
+  const [applyIVA, setApplyIVA] = useState(true);
 
   const { data: nextNumber } = trpc.notes.getNextNumber.useQuery();
   const { data: config } = trpc.config.get.useQuery();
@@ -112,7 +113,7 @@ export default function CreateNote() {
   const calculateTotals = () => {
     const subtotal = lines.reduce((sum, line) => sum + line.lineTotal, 0);
     const ivaRate = config?.ivaRate ? parseFloat(config.ivaRate) : 16;
-    const ivaAmount = subtotal * (ivaRate / 100);
+    const ivaAmount = applyIVA ? subtotal * (ivaRate / 100) : 0;
     const total = subtotal + ivaAmount;
     return { subtotal, ivaAmount, total, ivaRate };
   };
@@ -135,6 +136,7 @@ export default function CreateNote() {
         clientAddress: clientAddress || undefined,
         clientPhone: clientPhone || undefined,
         clientContact: clientContact || undefined,
+        applyIVA,
       });
 
       const noteId = (noteResult as any).insertId || 1;
@@ -239,8 +241,16 @@ export default function CreateNote() {
                   <span style={{ color: "#64748b" }}>Subtotal:</span>
                   <span style={{ fontWeight: "600", color: "#1e293b" }}>${subtotal.toFixed(2)}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>IVA (16%):</span>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#64748b", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={applyIVA}
+                      onChange={(e) => setApplyIVA(e.target.checked)}
+                      style={{ cursor: "pointer" }}
+                    />
+                    IVA (16%)
+                  </label>
                   <span style={{ fontWeight: "600", color: "#1e293b" }}>${ivaAmount.toFixed(2)}</span>
                 </div>
               </div>

@@ -73,6 +73,7 @@ export const deliveryNotes = mysqlTable("delivery_notes", {
   clientPhone: varchar("clientPhone", { length: 20 }),
   clientContact: varchar("clientContact", { length: 100 }),
   subtotal: decimal("subtotal", { precision: 12, scale: 2 }).default("0"),
+  applyIVA: boolean("applyIVA").default(true),
   ivaAmount: decimal("ivaAmount", { precision: 12, scale: 2 }).default("0"),
   total: decimal("total", { precision: 12, scale: 2 }).default("0"),
   observations: text("observations"),
