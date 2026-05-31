@@ -26,6 +26,13 @@ import {
   getSerials,
   createSerial,
   deleteSerial,
+  getClients,
+  getClientById,
+  searchClients,
+  createClient,
+  updateClient,
+  deleteClient,
+  deleteDeliveryNote,
 } from "./db";
 
 export const appRouter = router({
@@ -242,6 +249,10 @@ export const appRouter = router({
         if (data.receivedBy !== undefined) updateData.receivedBy = data.receivedBy || null;
         return updateDeliveryNote(id, updateData);
       }),
+
+    delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
+      return deleteDeliveryNote(input);
+    }),
   }),
 
   // ============ LÍNEAS DE NOTA ============
@@ -330,6 +341,64 @@ export const appRouter = router({
 
     delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
       return deleteSerial(input);
+    }),
+  }),
+
+  clients: router({
+    list: publicProcedure.query(async () => {
+      return getClients();
+    }),
+
+    getById: publicProcedure.input(z.number()).query(async ({ input }) => {
+      return getClientById(input);
+    }),
+
+    search: publicProcedure.input(z.string()).query(async ({ input }) => {
+      if (!input.trim()) return [];
+      return searchClients(input);
+    }),
+
+    create: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(1),
+          rif: z.string().optional(),
+          address: z.string().optional(),
+          phone: z.string().optional(),
+          email: z.string().optional(),
+          contact: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return createClient({
+          name: input.name,
+          rif: input.rif || null,
+          address: input.address || null,
+          phone: input.phone || null,
+          email: input.email || null,
+          contact: input.contact || null,
+        });
+      }),
+
+    update: protectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          name: z.string().optional(),
+          rif: z.string().optional(),
+          address: z.string().optional(),
+          phone: z.string().optional(),
+          email: z.string().optional(),
+          contact: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return updateClient(id, data as any);
+      }),
+
+    delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
+      return deleteClient(input);
     }),
   }),
 });

@@ -1,6 +1,6 @@
 import { eq, desc, like, and, sql, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, deliveryNotes, noteLines, serials, companyConfig, Product, DeliveryNote, NoteLine, Serial, CompanyConfig } from "../drizzle/schema";
+import { InsertUser, users, products, deliveryNotes, noteLines, serials, companyConfig, clients, Product, DeliveryNote, NoteLine, Serial, CompanyConfig, Client, InsertClient } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -261,3 +261,62 @@ export async function deleteSerial(id: number) {
 }
 
 
+// ============ CLIENTES ============
+export async function getClients() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(clients).orderBy(desc(clients.createdAt));
+}
+
+export async function getClientById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(clients).where(eq(clients.id, id)).limit(1);
+  return result[0] || null;
+}
+
+export async function searchClients(query: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(clients).where(
+    or(
+      like(clients.name, `%${query}%`),
+      like(clients.rif, `%${query}%`),
+      like(clients.email, `%${query}%`)
+    )
+  ).limit(10);
+}
+
+export async function createClient(data: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(clients).values(data);
+  return result;
+}
+
+export async function updateClient(id: number, data: Partial<Client>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(clients).set(data).where(eq(clients.id, id));
+}
+
+export async function deleteClient(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(clients).where(eq(clients.id, id));
+}
+
+// ============ NOTAS DE ENTREGA - FUNCIONES ADICIONALES ============
+export async function deleteDeliveryNote(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  // Eliminar seriales
+  const lines = await db.select().from(noteLines).where(eq(noteLines.noteId, id));
+  for (const line of lines) {
+    await db.delete(serials).where(eq(serials.lineId, line.id));
+  }
+  // Eliminar líneas
+  await db.delete(noteLines).where(eq(noteLines.noteId, id));
+  // Eliminar nota
+  await db.delete(deliveryNotes).where(eq(deliveryNotes.id, id));
+}

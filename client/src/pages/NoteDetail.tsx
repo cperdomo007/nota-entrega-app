@@ -93,6 +93,24 @@ export default function NoteDetail() {
               PDF
             </Button>
             <Button
+              onClick={() => setLocation(`/notes/${noteId}/edit`)}
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", padding: "0.75rem 1.5rem", borderRadius: "0.375rem", cursor: "pointer", fontWeight: "600" }}
+            >
+              ✎ Editar
+            </Button>
+            <Button
+              onClick={() => {
+                if (confirm("¿Estás seguro de que deseas eliminar esta nota?")) {
+                  trpc.notes.delete.useMutation().mutate(noteId, {
+                    onSuccess: () => setLocation("/notes")
+                  });
+                }
+              }}
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "transparent", color: "#ef4444", border: "1px solid #fecaca", padding: "0.75rem 1.5rem", borderRadius: "0.375rem", cursor: "pointer", fontWeight: "600" }}
+            >
+              🗑 Eliminar
+            </Button>
+            <Button
               onClick={() => setLocation("/")}
               style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", padding: "0.75rem 1.5rem", borderRadius: "0.375rem", cursor: "pointer", fontWeight: "600" }}
             >

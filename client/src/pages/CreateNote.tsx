@@ -34,14 +34,20 @@ export default function CreateNote() {
   const [editingSerials, setEditingSerials] = useState<number | null>(null);
   const [serialInput, setSerialInput] = useState("");
   const [applyIVA, setApplyIVA] = useState(true);
+  const [clientSearchQuery, setClientSearchQuery] = useState("");
+  const [clientSearchResults, setClientSearchResults] = useState<any[]>([]);
+  const [showClientSearch, setShowClientSearch] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
   const { data: nextNumber } = trpc.notes.getNextNumber.useQuery();
   const { data: config } = trpc.config.get.useQuery();
   const { data: products } = trpc.products.list.useQuery();
+  const { data: clients } = trpc.clients.list.useQuery();
   const createNoteMutation = trpc.notes.create.useMutation();
   const createLinesMutation = trpc.noteLines.create.useMutation();
   const createSerialsMutation = trpc.serials.create.useMutation();
   const updateNoteMutation = trpc.notes.update.useMutation();
+  const { data: searchClientResults } = trpc.clients.search.useQuery(clientSearchQuery, { enabled: clientSearchQuery.length > 0 });
 
   useEffect(() => {
     if (nextNumber) {
@@ -209,6 +215,42 @@ export default function CreateNote() {
 
             <Card style={{ padding: "1.5rem" }}>
               <h2 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#1e293b", marginBottom: "1rem" }}>Datos del Cliente</h2>
+              <div style={{ marginBottom: "1rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#475569", marginBottom: "0.25rem" }}>Buscar Cliente</label>
+                <div style={{ position: "relative" }}>
+                  <Input
+                    value={clientSearchQuery}
+                    onChange={(e) => {
+                      setClientSearchQuery(e.target.value);
+                      setShowClientSearch(true);
+                    }}
+                    placeholder="Buscar por nombre, RIF o email"
+                  />
+                  {showClientSearch && clientSearchQuery && searchClientResults && searchClientResults.length > 0 && (
+                    <div style={{ position: "absolute", top: "100%", left: 0, right: 0, background: "white", border: "1px solid #e2e8f0", borderRadius: "0.375rem", marginTop: "0.25rem", zIndex: 10, maxHeight: "200px", overflowY: "auto" }}>
+                      {searchClientResults.map((client: any) => (
+                        <div
+                          key={client.id}
+                          onClick={() => {
+                            setClientName(client.name);
+                            setClientRif(client.rif || "");
+                            setClientAddress(client.address || "");
+                            setClientPhone(client.phone || "");
+                            setClientContact(client.contact || "");
+                            setSelectedClientId(client.id);
+                            setShowClientSearch(false);
+                            setClientSearchQuery("");
+                          }}
+                          style={{ padding: "0.75rem", borderBottom: "1px solid #f1f5f9", cursor: "pointer", background: "#f8fafc" }}
+                        >
+                          <div style={{ fontWeight: "500", color: "#1e293b" }}>{client.name}</div>
+                          <div style={{ fontSize: "0.875rem", color: "#64748b" }}>{client.rif || "Sin RIF"}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
               <div style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#475569", marginBottom: "0.25rem" }}>Nombre/Razón Social *</label>
                 <Input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Nombre del cliente" />

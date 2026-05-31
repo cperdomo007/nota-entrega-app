@@ -44,6 +44,22 @@ export const products = mysqlTable("products", {
 export type Product = typeof products.$inferSelect;
 export type InsertProduct = typeof products.$inferInsert;
 
+// ============ CLIENTES ============
+export const clients = mysqlTable("clients", {
+  id: int("id").autoincrement().primaryKey(),
+  name: text("name").notNull(),
+  rif: varchar("rif", { length: 50 }).unique(),
+  address: text("address"),
+  phone: varchar("phone", { length: 20 }),
+  email: varchar("email", { length: 255 }),
+  contact: varchar("contact", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Client = typeof clients.$inferSelect;
+export type InsertClient = typeof clients.$inferInsert;
+
 // ============ CONFIGURACIÓN EMPRESARIAL ============
 export const companyConfig = mysqlTable("company_config", {
   id: int("id").autoincrement().primaryKey(),

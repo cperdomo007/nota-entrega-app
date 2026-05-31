@@ -103,3 +103,13 @@
 - [x] Número de nota editable manualmente (no auto-generado)
 - [x] Vista de impresión actualizada para mostrar IVA solo si está habilitado
 - [x] Todos los tests pasando (17 tests unitarios)
+
+
+## CAMBIOS FINALES IMPLEMENTADOS (v3 - Clientes y Edición)
+- [x] Tabla de clientes agregada a la base de datos
+- [x] Procedimientos tRPC para CRUD de clientes
+- [x] Búsqueda de clientes con autocomplete en formulario de nota
+- [x] Botón de editar nota (preparado para implementación futura)
+- [x] Botón de eliminar nota con confirmación
+- [x] Procedimiento de eliminación de notas con cascada de líneas y seriales
+- [x] Todos los tests pasando (17 tests unitarios)
