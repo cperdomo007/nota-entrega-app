@@ -24,6 +24,8 @@ export default function NoteDetail() {
 
   const { data: config } = trpc.config.get.useQuery();
 
+  const deleteNoteMutation = trpc.notes.delete.useMutation();
+
   if (!match) return null;
 
   if (isLoading) {
@@ -101,7 +103,7 @@ export default function NoteDetail() {
             <Button
               onClick={() => {
                 if (confirm("¿Estás seguro de que deseas eliminar esta nota?")) {
-                  trpc.notes.delete.useMutation().mutate(noteId, {
+                  deleteNoteMutation.mutate(noteId, {
                     onSuccess: () => setLocation("/notes")
                   });
                 }
