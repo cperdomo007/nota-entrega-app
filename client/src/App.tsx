@@ -10,6 +10,7 @@ import NoteDetail from "./pages/NoteDetail";
 import NotesList from "./pages/NotesList";
 import Settings from "./pages/Settings";
 import Products from "./pages/Products";
+import Clients from "./pages/Clients";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -18,7 +19,8 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/notes/new"} component={CreateNote} />
       <Route path={"/notes/:id"} component={NoteDetail} />
-      <Route path={"/notes"} component={NotesList} />
+      <Route path={"/products"} component={Products} />
+      <Route path={"/clients"} component={Clients} />
       <Route path={"/settings"} component={Settings} />
       <Route path={"/products"} component={Products} />
       <Route path={"/404"} component={NotFound} />

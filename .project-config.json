@@ -1,0 +1,43 @@
+{
+  "build_command": "pnpm run build",
+  "capabilities": [
+    "server",
+    "db",
+    "user"
+  ],
+  "dev_command": "pnpm run dev",
+  "env_vars": {
+    "DATABASE_URL": "mysql://25qoxnJsv8xfBtf.ced4e3b4f25e:P9HsG75YgZ4T0fmXYTA5@gateway04.us-east-1.prod.aws.tidbcloud.com:4000/BvoaPuzCL3UY9YDFKrrFjc?ssl={\"rejectUnauthorized\":true}"
+  },
+  "experiments": [
+    "no_db_push"
+  ],
+  "git_remote": {
+    "repo_url": "s3://vida-prod-gitrepo/webdev-git/310519663411997303/BvoaPuzCL3UY9YDFKrrFjc",
+    "access_key_id": "ASIAZV3A2ECZOC7A6GEE",
+    "secret_access_key": "OF12AOMhggCVffOWEczOgSxpu2IPrSieKQtq6A7N",
+    "session_token": "IQoJb3JpZ2luX2VjEPL//////////wEaCXVzLWVhc3QtMSJHMEUCIFuHx15iIbB/7HMpd0YHrbfW0veZr5sscOYBltxeHBe9AiEAu2ymN21rLoDeWYLDAdNy40ZY0rNTe95kIMAngJwtxo8q/wMIuv//////////ARAEGgw2NjUzODYwOTg4NjYiDBqZrICgzfp0oT4KTyrTA+kkwUzCzZZggtczPr8Nn66Oy4gvmESDvYaQzLitycs4bILjHTPUICkDuq4l7QmsZhYNuHUJ7qrTrroygAVjq8hyPWm0NAt4xMPfasheV4OFO+plpI0o727y5KdkCWiov7cUj9uFd8BtpDLqwp43lFsDddXhqu7Fa/73IayFl5Kb6P+6jXjnQdYFMYnOzgNogKxhDL2J+LfblVQS+2t9b5BzPJA626gIz6zlM0GfzMNvQzL+2jrhA7MhuciBXW8uBsEL3noB9AUzYt19Z8VksKknjHg9W7vp75P2ua3BsBimYd/WPvsQx0CK3fbHu8SHL37UFXsb9HdXqDQpnggdTzvmLTTKF6uhgEKN9neEHSFupOv0IiZ0LITXXbts9ULLAobiuIF10hymgtfCNqtPjlTMCzarOB+qhqHJFUQxTI91r9pzdRtje/00lBrzmu3ysV6kdS/8TSVfWl3vlkBCqHUaRycrjgUx2DCw4MUTuYzCPiq0ONAW2003DC3f4mDtzTuXSIMWxXNwJN87/VlZ3lrcJeyvnQgc1S1cESHTSAG58CfYPgmo1VhDL1Y2+tVYgS9hYccbDTlfsPCT/LHS50x6Vs0DoidrHM+x/4Qov4ijGd81MILQ49AGOp0Bijl+kI0zyDzLMHc1Cc9qMQuhnz8KkByygcgBxYRrjhpeZnZHWZStFsYOCLFZk2smZo/kVY388jYmK9RrVzDEcRRXMQAuf+6tg5aYCFwAfAM4mKA8hUxkYq9Xy4sLEWBJcmoUaJtlOizrSbYFU2OL1FDNgulf+frEGsdpdl11flgM6a+rLK7y4OqMad4lLjjokL8GfKsSZrCIdYXJHQ==",
+    "expiration": "2026-05-29T13:12:34.000Z"
+  },
+  "name": "nota-entrega-app",
+  "path": "/home/ubuntu/nota-entrega-app",
+  "port": 3000,
+  "secrets": {
+    "BUILT_IN_FORGE_API_KEY": "dweE5shj3G3WPM3dMytanb",
+    "BUILT_IN_FORGE_API_URL": "https://forge.manus.ai",
+    "JWT_SECRET": "be7Rxd6gqDqsxssnKD3d8x",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "OWNER_NAME": "cperdomo.work",
+    "OWNER_OPEN_ID": "Kt4yCtdgj5Btu4TcULF6jY",
+    "VITE_ANALYTICS_ENDPOINT": "https://manus-analytics.com",
+    "VITE_ANALYTICS_WEBSITE_ID": "74c46c1f-19f8-4370-af6f-46c2aa74632f",
+    "VITE_APP_ID": "BvoaPuzCL3UY9YDFKrrFjc",
+    "VITE_APP_LOGO": "",
+    "VITE_APP_TITLE": "Sistema de Notas de Entrega",
+    "VITE_FRONTEND_FORGE_API_KEY": "dSeXYAHuygAcj8eVXN4goq",
+    "VITE_FRONTEND_FORGE_API_URL": "https://forge.manus.ai",
+    "VITE_OAUTH_PORTAL_URL": "https://manus.im"
+  },
+  "template_id": "web-db-user",
+  "test_command": "pnpm test"
+}
