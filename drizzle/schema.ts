@@ -1,4 +1,4 @@
-import { decimal, int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, date } from "drizzle-orm/mysql-core";
+import { decimal, int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, date, index, uniqueIndex, longtext } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 
 /**
@@ -70,6 +70,7 @@ export const companyConfig = mysqlTable("company_config", {
   phone2: varchar("phone2", { length: 20 }),
   email: varchar("email", { length: 255 }),
   website: varchar("website", { length: 255 }),
+  logoDataUrl: longtext("logoDataUrl"),
   ivaRate: decimal("ivaRate", { precision: 5, scale: 2 }).default("16.00"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -112,7 +113,10 @@ export const noteLines = mysqlTable("note_lines", {
   lineTotal: decimal("lineTotal", { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  noteIdIdx: index("note_lines_note_id_idx").on(table.noteId),
+  productIdIdx: index("note_lines_product_id_idx").on(table.productId),
+}));
 
 export type NoteLine = typeof noteLines.$inferSelect;
 export type InsertNoteLine = typeof noteLines.$inferInsert;
@@ -123,7 +127,10 @@ export const serials = mysqlTable("serials", {
   lineId: int("lineId").notNull(),
   serial: varchar("serial", { length: 255 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, (table) => ({
+  lineIdIdx: index("serials_line_id_idx").on(table.lineId),
+  lineSerialUnique: uniqueIndex("serials_line_serial_unique").on(table.lineId, table.serial),
+}));
 
 export type Serial = typeof serials.$inferSelect;
 export type InsertSerial = typeof serials.$inferInsert;

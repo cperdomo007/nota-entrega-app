@@ -29,6 +29,20 @@
       "when": 1780231252548,
       "tag": "0003_salty_sinister_six",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1780239000000,
+      "tag": "0004_company_logo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1780243457498,
+      "tag": "0005_wide_fixer",
+      "breakpoints": true
     }
   ]
 }
