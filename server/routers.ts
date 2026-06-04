@@ -17,6 +17,8 @@ import {
   searchDeliveryNotes,
   getNextNoteNumber,
   createDeliveryNote,
+  createCompleteDeliveryNote,
+  updateCompleteDeliveryNote,
   updateDeliveryNote,
   getNoteLines,
   getNoteLineById,
@@ -66,12 +68,12 @@ export const appRouter = router({
     create: protectedProcedure
       .input(
         z.object({
-          barcode: z.string().optional(),
-          name: z.string().min(1),
+          barcode: z.string().trim().optional(),
+          name: z.string().trim().min(1, "El nombre es obligatorio"),
           description: z.string().optional(),
           category: z.string().optional(),
-          price: z.string().or(z.number()),
-          unit: z.string().default("UN"),
+          price: z.coerce.number().positive("El precio debe ser mayor que cero"),
+          unit: z.string().trim().min(1, "La unidad es obligatoria").default("UN"),
           hasSerial: z.boolean().default(false),
           stock: z.number().default(0),
         })
@@ -93,12 +95,12 @@ export const appRouter = router({
       .input(
         z.object({
           id: z.number(),
-          barcode: z.string().optional(),
-          name: z.string().optional(),
+          barcode: z.string().trim().optional(),
+          name: z.string().trim().min(1, "El nombre es obligatorio").optional(),
           description: z.string().optional(),
           category: z.string().optional(),
-          price: z.string().or(z.number()).optional(),
-          unit: z.string().optional(),
+          price: z.coerce.number().positive("El precio debe ser mayor que cero").optional(),
+          unit: z.string().trim().min(1, "La unidad es obligatoria").optional(),
           hasSerial: z.boolean().optional(),
           stock: z.number().optional(),
         })
@@ -138,6 +140,7 @@ export const appRouter = router({
           phone2: z.string().optional(),
           email: z.string().optional(),
           website: z.string().optional(),
+          logoDataUrl: z.string().optional(),
           ivaRate: z.string().or(z.number()).optional(),
         })
       )
@@ -150,6 +153,7 @@ export const appRouter = router({
         if (input.phone2 !== undefined) updateData.phone2 = input.phone2 || null;
         if (input.email !== undefined) updateData.email = input.email || null;
         if (input.website !== undefined) updateData.website = input.website || null;
+        if (input.logoDataUrl !== undefined) updateData.logoDataUrl = input.logoDataUrl || null;
         if (input.ivaRate !== undefined) updateData.ivaRate = String(input.ivaRate);
         return upsertCompanyConfig(updateData);
       }),
@@ -209,7 +213,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const result = await createDeliveryNote({
           noteNumber: input.noteNumber,
-          noteDate: new Date(input.noteDate),
+          noteDate: new Date(`${input.noteDate.slice(0, 10)}T00:00:00`),
           clientName: input.clientName,
           clientRif: input.clientRif || null,
           clientAddress: input.clientAddress || null,
@@ -224,6 +228,49 @@ export const appRouter = router({
           receivedBy: input.receivedBy || null,
         });
         return result;
+      }),
+
+    createComplete: protectedProcedure
+      .input(
+        z.object({
+          noteNumber: z.string().trim().min(1, "El número de nota es obligatorio"),
+          noteDate: z.string().min(1, "La fecha es obligatoria"),
+          clientName: z.string().trim().min(1, "El cliente es obligatorio"),
+          clientRif: z.string().optional(),
+          clientAddress: z.string().optional(),
+          clientPhone: z.string().optional(),
+          clientContact: z.string().optional(),
+          applyIVA: z.boolean().default(true),
+          ivaRate: z.string().or(z.number()).optional(),
+          observations: z.string().optional(),
+          deliveredBy: z.string().optional(),
+          receivedBy: z.string().optional(),
+          lines: z.array(
+            z.object({
+              productId: z.number().int().positive(),
+              quantity: z.number().int().positive(),
+              unitPrice: z.coerce.number().nonnegative(),
+              serials: z.array(z.string()).default([]),
+            })
+          ).min(1, "La nota debe tener al menos un producto"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return createCompleteDeliveryNote({
+          noteNumber: input.noteNumber,
+          noteDate: input.noteDate,
+          clientName: input.clientName,
+          clientRif: input.clientRif || null,
+          clientAddress: input.clientAddress || null,
+          clientPhone: input.clientPhone || null,
+          clientContact: input.clientContact || null,
+          applyIVA: input.applyIVA,
+          ivaRate: input.ivaRate,
+          observations: input.observations || null,
+          deliveredBy: input.deliveredBy || null,
+          receivedBy: input.receivedBy || null,
+          lines: input.lines,
+        });
       }),
 
     update: protectedProcedure
@@ -248,6 +295,51 @@ export const appRouter = router({
         if (data.deliveredBy !== undefined) updateData.deliveredBy = data.deliveredBy || null;
         if (data.receivedBy !== undefined) updateData.receivedBy = data.receivedBy || null;
         return updateDeliveryNote(id, updateData);
+      }),
+
+    updateComplete: protectedProcedure
+      .input(
+        z.object({
+          id: z.number().int().positive(),
+          noteNumber: z.string().trim().min(1, "El numero de nota es obligatorio"),
+          noteDate: z.string().min(1, "La fecha es obligatoria"),
+          clientName: z.string().trim().min(1, "El cliente es obligatorio"),
+          clientRif: z.string().optional(),
+          clientAddress: z.string().optional(),
+          clientPhone: z.string().optional(),
+          clientContact: z.string().optional(),
+          applyIVA: z.boolean().default(true),
+          ivaRate: z.string().or(z.number()).optional(),
+          observations: z.string().optional(),
+          deliveredBy: z.string().optional(),
+          receivedBy: z.string().optional(),
+          lines: z.array(
+            z.object({
+              productId: z.number().int().positive(),
+              quantity: z.number().int().positive(),
+              unitPrice: z.coerce.number().nonnegative(),
+              serials: z.array(z.string()).default([]),
+            })
+          ).min(1, "La nota debe tener al menos un producto"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return updateCompleteDeliveryNote({
+          id: input.id,
+          noteNumber: input.noteNumber,
+          noteDate: input.noteDate,
+          clientName: input.clientName,
+          clientRif: input.clientRif || null,
+          clientAddress: input.clientAddress || null,
+          clientPhone: input.clientPhone || null,
+          clientContact: input.clientContact || null,
+          applyIVA: input.applyIVA,
+          ivaRate: input.ivaRate,
+          observations: input.observations || null,
+          deliveredBy: input.deliveredBy || null,
+          receivedBy: input.receivedBy || null,
+          lines: input.lines,
+        });
       }),
 
     delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
