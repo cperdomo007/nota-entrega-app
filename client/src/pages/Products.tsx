@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
-import { Plus, Edit2, Trash2, ArrowLeft, Save } from "lucide-react";
+import { Plus, Edit2, Trash2, ArrowLeft, Save, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Products() {
@@ -71,6 +71,39 @@ export default function Products() {
     setShowForm(true);
   };
 
+  const handleExportToCSV = () => {
+    if (!products || products.length === 0) {
+      toast.error("No hay productos para exportar");
+      return;
+    }
+
+    const headers = ["Código de Barras", "Nombre", "Descripción", "Precio", "Unidad", "Tiene Serial"];
+    const rows = products.map((p: any) => [
+      p.barcode,
+      p.name,
+      p.description || "",
+      p.price,
+      p.unit || "",
+      p.hasSerial ? "Sí" : "No",
+    ]);
+
+    const csv = [
+      headers.join(","),
+      ...rows.map((row: any) => row.map((cell: any) => `"${cell}"`).join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `productos_${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Productos exportados correctamente");
+  };
+
   const handleDelete = async (id: number) => {
     if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
       try {
@@ -112,13 +145,22 @@ export default function Products() {
             </div>
           </div>
           {!showForm && (
-            <Button
-              onClick={() => setShowForm(true)}
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgb(59, 130, 246)", color: "white", padding: "0.75rem 1.5rem", border: "none", borderRadius: "0.375rem", cursor: "pointer", fontWeight: "600" }}
-            >
-              <Plus style={{ width: "1rem", height: "1rem" }} />
-              Nuevo Producto
-            </Button>
+            <div style={{ display: "flex", gap: "0.75rem" }}>
+              <Button
+                onClick={handleExportToCSV}
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", padding: "0.75rem 1.5rem", borderRadius: "0.375rem", cursor: "pointer", fontWeight: "600" }}
+              >
+                <Download style={{ width: "1rem", height: "1rem" }} />
+                Exportar
+              </Button>
+              <Button
+                onClick={() => setShowForm(true)}
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgb(59, 130, 246)", color: "white", padding: "0.75rem 1.5rem", border: "none", borderRadius: "0.375rem", cursor: "pointer", fontWeight: "600" }}
+              >
+                <Plus style={{ width: "1rem", height: "1rem" }} />
+                Nuevo Producto
+              </Button>
+            </div>
           )}
         </div>
 

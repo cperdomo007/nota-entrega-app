@@ -104,7 +104,7 @@ export default function NoteDetail() {
               onClick={() => {
                 if (confirm("¿Estás seguro de que deseas eliminar esta nota?")) {
                   deleteNoteMutation.mutate(noteId, {
-                    onSuccess: () => setLocation("/notes")
+                    onSuccess: () => setLocation("/")
                   });
                 }
               }}

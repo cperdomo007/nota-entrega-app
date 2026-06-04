@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { Plus, Trash2, Edit2, ArrowLeft } from "lucide-react";
+import { Plus, Trash2, Edit2, ArrowLeft, Download } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Clients() {
   const [, setLocation] = useLocation();
@@ -87,6 +88,39 @@ export default function Clients() {
     setShowForm(false);
   };
 
+  const handleExportToCSV = () => {
+    if (!clients || clients.length === 0) {
+      toast.error("No hay clientes para exportar");
+      return;
+    }
+
+    const headers = ["Nombre", "RIF", "Dirección", "Teléfono", "Email", "Contacto"];
+    const rows = clients.map((c: any) => [
+      c.name,
+      c.rif || "",
+      c.address || "",
+      c.phone || "",
+      c.email || "",
+      c.contact || "",
+    ]);
+
+    const csv = [
+      headers.join(","),
+      ...rows.map((row: any) => row.map((cell: any) => `"${cell}"`).join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `clientes_${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Clientes exportados correctamente");
+  };
+
   return (
     <div style={{ minHeight: "100vh", padding: "2rem", background: "linear-gradient(to bottom right, #f8fafc, #f1f5f9)" }}>
       <div style={{ maxWidth: "80rem", marginLeft: "auto", marginRight: "auto" }}>
@@ -101,13 +135,22 @@ export default function Clients() {
               Volver
             </Button>
             {!showForm && (
-              <Button
-                onClick={() => setShowForm(true)}
-                style={{ background: "rgb(59, 130, 246)", color: "white", padding: "0.5rem 1rem", borderRadius: "0.375rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", border: "none", fontWeight: "600" }}
-              >
-                <Plus style={{ width: "1rem", height: "1rem" }} />
-                Nuevo Cliente
-              </Button>
+              <>
+                <Button
+                  onClick={handleExportToCSV}
+                  style={{ background: "transparent", color: "#64748b", border: "1px solid #e2e8f0", padding: "0.5rem 1rem", borderRadius: "0.375rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "600" }}
+                >
+                  <Download style={{ width: "1rem", height: "1rem" }} />
+                  Exportar
+                </Button>
+                <Button
+                  onClick={() => setShowForm(true)}
+                  style={{ background: "rgb(59, 130, 246)", color: "white", padding: "0.5rem 1rem", borderRadius: "0.375rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", border: "none", fontWeight: "600" }}
+                >
+                  <Plus style={{ width: "1rem", height: "1rem" }} />
+                  Nuevo Cliente
+                </Button>
+              </>
             )}
           </div>
         </div>
